@@ -23,7 +23,7 @@ services:
       - ./napcat/config:/app/napcat/config
       - ./napcat/logs:/app/napcat/logs
   iamai:
-    image: kuron/iamai-cqhttp:su
+    image: docker.hydroroll.team/kuron/iamai-cqhttp:su
     container_name: iamai
     expose:
       - "3001"

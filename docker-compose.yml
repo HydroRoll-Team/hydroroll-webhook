@@ -15,6 +15,7 @@ services:
     ports:
       - 6099:6099
       - 3001:3001
+      - 997:997
     restart: always
     # 如果是重新创建的容器，需要固定 Mac 地址
     mac_address: 02:42:ac:11:00:99

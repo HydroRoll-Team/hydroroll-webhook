@@ -26,12 +26,6 @@ HydroRoll Webhook |logo|
 ----
 
 
-**GitHub Events to QQ Groups** 📮
-
-
-项目模块
---------
-
 .. list-table::
     :widths: 15 25 60
     :header-rows: 1
@@ -53,8 +47,8 @@ HydroRoll Webhook |logo|
       - |Done|
       - 容器化部署
 
-GitHub Webhook 转发机器人
-=======================
+Repost Bot
+==========
 
 features
 --------
@@ -86,11 +80,11 @@ features
 
 ----
 
-快速开始
-========
+Quick Start
+===========
 
-配置文件
---------
+Configure File
+--------------
 
 编辑 ``config.toml`` 文件，配置适配器和插件：
 
@@ -111,15 +105,15 @@ features
   port = 997
   auto_start = true
 
-运行
-----
+Running
+-------
 
 .. code:: shell
 
   python main.py
 
-Docker 部署
------------
+Docker Deployment
+-----------------
 
 从 ghcr.io 拉取并自动运行:
 
@@ -144,11 +138,11 @@ Docker 部署
 
 ----
 
-Webhook 插件命令
-----------------
+Webhook Plugin Commands
+-----------------------
 
-服务器控制
-~~~~~~~~~~
+Server Control
+~~~~~~~~~~~~~~
 
 .. code:: text
 
@@ -158,8 +152,8 @@ Webhook 插件命令
   /webhook stats     - 查看统计信息
   /webhook help      - 显示帮助信息
 
-群组管理
-~~~~~~~~
+Group Management
+~~~~~~~~~~~~~~~~
 
 .. code:: text
 
@@ -167,8 +161,8 @@ Webhook 插件命令
   /webhook delgroup <群号>    - 删除目标群组
   /webhook listgroups         - 列出所有目标群组
 
-事件管理
-~~~~~~~~
+Event Management
+~~~~~~~~~~~~~~~~
 
 .. code:: text
 
@@ -176,8 +170,8 @@ Webhook 插件命令
   /webhook delevent <事件类型>   - 禁用事件类型
   /webhook listevents            - 列出已启用的事件
 
-配置 GitHub Webhook
--------------------
+Configure GitHub Webhook
+-------------------------
 
 1. 进入 GitHub 仓库的 **Settings** > **Webhooks**
 2. 点击 **Add webhook**
@@ -190,8 +184,8 @@ Webhook 插件命令
 
 4. 点击 **Add webhook** 保存
 
-使用示例
---------
+Use Examples
+------------
 
 .. code:: text
 
@@ -212,10 +206,10 @@ Webhook 插件命令
 
 ----
 
-ArxivRSS 插件
-=============
+ArxivRSS Plugin
+================
 
-基本命令
+Commands
 --------
 
 .. code:: text
@@ -229,8 +223,8 @@ ArxivRSS 插件
   /arxiv kw show              - 显示关键词
   /arxiv kw del <关键词>      - 删除关键词
 
-使用示例
---------
+Use Examples
+------------
 
 .. code:: text
 
@@ -248,8 +242,8 @@ ArxivRSS 插件
 
 ----
 
-项目结构
-========
+Architecture
+============
 
 .. code:: text
 
@@ -267,8 +261,8 @@ ArxivRSS 插件
   ├── docker-compose.yml      # Docker Compose 配置
   └── README.rst
 
-常见问题
-========
+FAQ
+===
 
 Q: 如何修改 Webhook 监听端口？
 A:在 ``config.toml`` 中修改 ``[plugin.webhook]`` 的 ``port`` 配置。
@@ -279,7 +273,7 @@ A:配置保存在 ``data/webhook_config.json``，会自动创建。
 Q: 如何调试 Webhook？
 A: 使用 ``/webhook status`` 查看服务器状态并在 GitHub Webhook 页面查看推送记录, 最后访问 ``http://服务器IP:997/stats`` 查看统计信息
 
-许可证
+LICENSE
 ======
 
 AGPLv3 © 2025-PRESENT `HydroRoll-Team`_

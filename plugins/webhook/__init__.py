@@ -42,7 +42,7 @@ class WebhookDataManager:
             ]
         }
         self._load()
-
+    
     def _load(self):
         """从文件加载配置"""
         if self.data_file.exists():

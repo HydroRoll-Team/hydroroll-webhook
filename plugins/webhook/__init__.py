@@ -163,6 +163,7 @@ class WebhookServer:
     
     def __init__(self, config: WebhookPluginConfig, bot):
         self.config = config
+        self.bot = bot
         self.data_manager = WebhookDataManager(config.data_file)
         self.runner: Optional[web.AppRunner] = None
         self.site: Optional[web.TCPSite] = None
@@ -311,9 +312,19 @@ class WebhookServer:
             logger.warning("No target groups configured")
             return
         
+        cqhttp_adapter = None
+        for adapter in self.bot.adapters:
+            if adapter.name.lower() == "cqhttp":
+                cqhttp_adapter = adapter
+                break
+        
+        if not cqhttp_adapter:
+            logger.error("CQHTTP adapter not found")
+            return
+        
         for group_id in target_groups:
             try:
-                await self.event.adapter.call_api(
+                await cqhttp_adapter.call_api(
                     "send_group_msg",
                     group_id=group_id,
                     message=message

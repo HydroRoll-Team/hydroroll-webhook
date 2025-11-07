@@ -1,7 +1,3 @@
-"""
-HydroRoll Webhook Plugin - Advanced Version
-支持配置文件、多群推送、事件过滤等高级特性
-"""
 from aiohttp import web
 from iamai import Plugin, ConfigModel
 from iamai.log import logger
@@ -11,7 +7,6 @@ from pydantic import Field
 import asyncio
 import re
 
-# 全局单例服务器实例
 _global_webhook_server: Optional['WebhookServer'] = None
 
 
@@ -20,15 +15,11 @@ class WebhookPluginConfig(ConfigModel):
     
     __config_name__: str = "webhook"
     
-    # 服务器配置
     host: str = Field(default="0.0.0.0", description="监听地址")
     port: int = Field(default=997, description="监听端口")
     auto_start: bool = Field(default=True, description="是否自动启动")
-    
-    # 消息推送配置
     target_groups: List[int] = Field(default=[126211793], description="目标 QQ 群列表")
     
-    # 事件过滤配置
     enabled_events: List[str] = Field(
         default=[
             "push", "star", "fork", "issues", "issue_comment",
@@ -38,7 +29,6 @@ class WebhookPluginConfig(ConfigModel):
         description="启用的事件类型"
     )
     
-    # 高级配置
     max_commit_display: int = Field(default=5, description="最多显示的提交数量")
     truncate_comment: int = Field(default=100, description="评论截断长度")
     filter_bots: bool = Field(default=False, description="是否过滤机器人事件")
@@ -119,7 +109,7 @@ class WebhookServer:
         """启动 Webhook 服务器"""
         if self.is_running:
             logger.info("Webhook server is already running")
-            return True  # 已运行视为成功
+            return True
         
         try:
             self.app = web.Application()
@@ -141,7 +131,6 @@ class WebhookServer:
         except OSError as e:
             if "address already in use" in str(e).lower():
                 logger.warning(f"Port {self.config.port} is already in use. Server may already be running.")
-                # 端口已被占用，可能是已经启动了
                 self.is_running = True
                 return True
             logger.error(f"Failed to start webhook server: {e}")
@@ -233,20 +222,7 @@ class WebhookServer:
     
     async def _send_to_groups(self, message: str):
         """发送消息到多个群"""
-        # 使用第一个可用的插件实例
-        plugin = None
-        for p in self.plugins:
-            if p and hasattr(p, 'bot') and p.bot:
-                plugin = p
-                break
-        
-        if not plugin or not plugin.bot:
-            logger.error("No plugin with bot available")
-            return
-        
-        # 获取 CQHTTP 适配器
-        cqhttp_adapter = None
-        for adapter in plugin.bot.adapters:
+        for adapter in self.bot.adapters:
             if adapter.name == "cqhttp":
                 cqhttp_adapter = adapter
                 break
@@ -255,7 +231,6 @@ class WebhookServer:
             logger.error("CQHTTP adapter not found")
             return
         
-        # 发送到所有配置的群
         for group_id in self.config.target_groups:
             try:
                 await cqhttp_adapter.call_api(
@@ -268,19 +243,7 @@ class WebhookServer:
                 logger.error(f"Failed to send to group {group_id}: {e}")
 
 
-class HydroRollWebhookAdvanced(Plugin):
-    """
-    HydroRoll Webhook 插件 - 高级版
-    
-    特性：
-    - 配置文件支持
-    - 多群推送
-    - 事件过滤
-    - 统计信息
-    - 健康检查
-    - 单例模式（支持多个插件实例共享同一服务器）
-    """
-    
+class HydroRollWebhook(Plugin):
     priority: int = 10
     block: bool = False
     
@@ -290,17 +253,14 @@ class HydroRollWebhookAdvanced(Plugin):
         super().__init__()
         self.server: Optional[WebhookServer] = None
         
-        # 延迟初始化，确保 config 可用
         asyncio.create_task(self._initialize())
     
     async def _initialize(self):
-        """异步初始化"""
         global _global_webhook_server
         
-        await asyncio.sleep(1)  # 等待 bot 初始化
+        await asyncio.sleep(1)
         
         try:
-            # 使用全局单例服务器
             if _global_webhook_server is None:
                 logger.info(f"Creating new webhook server instance for {self.name}")
                 _global_webhook_server = WebhookServer(self.config)
@@ -309,10 +269,7 @@ class HydroRollWebhookAdvanced(Plugin):
                 logger.info(f"Reusing existing webhook server instance for {self.name}")
                 self.server = _global_webhook_server
             
-            # 注册当前插件实例
             self.server.register_plugin(self)
-            
-            # 自动启动（如果还未启动）
             if self.config.auto_start and not self.server.is_running:
                 success = await self.server.start()
                 if success:
@@ -327,15 +284,14 @@ class HydroRollWebhookAdvanced(Plugin):
             logger.error(f"Error initializing webhook plugin: {e}", exc_info=True)
     
     async def handle(self) -> None:
-        """处理命令"""
         message = str(self.event.message).strip()
         
         commands = {
-            "HydroRoll on": self._cmd_start,
-            "HydroRoll off": self._cmd_stop,
-            "HydroRoll status": self._cmd_status,
-            "HydroRoll stats": self._cmd_stats,
-            "HydroRoll help": self._cmd_help,
+            "/webhook on": self._cmd_start,
+            "/webhook off": self._cmd_stop,
+            "/webhook status": self._cmd_status,
+            "/webhook stats": self._cmd_stats,
+            "/webhook help": self._cmd_help,
         }
         
         handler = commands.get(message)
@@ -343,23 +299,22 @@ class HydroRollWebhookAdvanced(Plugin):
             await handler()
     
     async def _cmd_start(self):
-        """启动服务器"""
         if not self.server:
             await self.event.reply("Server not initialized")
             return
         
         if self.server.is_running:
-            await self.event.reply("✅ Server is already running")
+            await self.event.reply("Server is already running")
         else:
             success = await self.server.start()
             if success:
                 await self.event.reply(
-                    f"✅ Server started on {self.config.host}:{self.config.port}\n"
+                    f"Server started on {self.config.host}:{self.config.port}\n"
                     f"Target groups: {', '.join(map(str, self.config.target_groups))}\n"
                     f"Registered plugins: {len(self.server.plugins)}"
                 )
             else:
-                await self.event.reply("❌ Failed to start server")
+                await self.event.reply("Failed to start server")
     
     async def _cmd_stop(self):
         """停止服务器"""
@@ -372,17 +327,17 @@ class HydroRollWebhookAdvanced(Plugin):
         else:
             success = await self.server.stop()
             if success:
-                await self.event.reply("✅ Server stopped")
+                await self.event.reply("Server stopped")
             else:
-                await self.event.reply("❌ Failed to stop server")
-    
+                await self.event.reply("Failed to stop server")
+
     async def _cmd_status(self):
         """查询状态"""
         if not self.server:
             await self.event.reply("Server not initialized")
             return
         
-        status = "🟢 Running" if self.server.is_running else "🔴 Stopped"
+        status = "Running" if self.server.is_running else "Stopped"
         message = f"Status: {status}\n"
         
         if self.server.is_running:
@@ -400,10 +355,10 @@ class HydroRollWebhookAdvanced(Plugin):
             return
         
         stats = self.server.stats
-        message = f"📊 Statistics:\n"
+        message = f"Statistics:\n"
         message += f"Total requests: {stats['total_requests']}\n"
-        message += f"✅ Successful: {stats['successful_requests']}\n"
-        message += f"❌ Failed: {stats['failed_requests']}\n\n"
+        message += f"Successful: {stats['successful_requests']}\n"
+        message += f"Failed: {stats['failed_requests']}\n\n"
         message += "Events received:\n"
         
         for event_type, count in sorted(stats['events_by_type'].items(), key=lambda x: x[1], reverse=True):
@@ -414,13 +369,13 @@ class HydroRollWebhookAdvanced(Plugin):
     async def _cmd_help(self):
         """显示帮助"""
         help_text = """
-🤖 HydroRoll Webhook Commands:
+HydroRoll Webhook Commands:
 
-HydroRoll on - Start webhook server
-HydroRoll off - Stop webhook server  
-HydroRoll status - Show server status
-HydroRoll stats - Show statistics
-HydroRoll help - Show this help
+/webhook on - Start webhook server
+/webhook off - Stop webhook server
+/webhook status - Show server status
+/webhook stats - Show statistics
+/webhook help - Show this help
         """.strip()
         await self.event.reply(help_text)
     
@@ -433,7 +388,7 @@ HydroRoll help - Show this help
             return False
         
         message = str(self.event.message).strip()
-        return message.startswith("HydroRoll ")
+        return message.startswith("/webhook ")
     
     def _format_event(self, event_type: str, data: Dict[str, Any]) -> Optional[str]:
         """格式化事件消息"""
@@ -442,17 +397,14 @@ HydroRoll help - Show this help
             if not template:
                 return None
             
-            # 处理字典模板
             if isinstance(template, dict):
                 action = data.get("action")
                 if action not in template:
                     return None
                 template = template[action]
             
-            # 预处理数据
             processed_data = self._preprocess_data(event_type, data)
             
-            # 格式化
             return template.format(**processed_data)
             
         except Exception as e:
@@ -463,7 +415,6 @@ HydroRoll help - Show this help
         """预处理事件数据"""
         processed = dict(data)
         
-        # 处理 push 事件
         if event_type == "push" and "commits" in data:
             commits = data["commits"][:self.config.max_commit_display]
             commits_text = "\n".join(
@@ -477,7 +428,6 @@ HydroRoll help - Show this help
             processed["pushes"] = commits_text
             processed["commits_count"] = len(data["commits"])
         
-        # 处理评论
         if "comment" in data and "body" in data["comment"]:
             comment = data["comment"]["body"]
             if len(comment) > self.config.truncate_comment:

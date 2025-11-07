@@ -29,7 +29,7 @@ class WebhookPluginConfig(ConfigModel):
 
 class WebhookDataManager:
     """Webhook 数据管理类 - 负责配置的持久化"""
-    
+
     def __init__(self, data_file: str):
         self.data_file = Path(data_file)
         self.data = {

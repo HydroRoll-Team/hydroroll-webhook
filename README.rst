@@ -285,13 +285,6 @@ A: 使用 ``/webhook status`` 查看服务器状态并在 GitHub Webhook 页面�
 
 AGPLv3 © 2025-PRESENT `简律纯`_ & `HydroRoll-Team`_。
 
-致谢
-====
-
-- `iamai`_ - 强大的多模态机器学习框架
-- `go-cqhttp`_ - 稳定的 QQ 机器人框架
-- `HydroRoll-Team`_ - 水系组织
-
 .. |logo| image:: https://files.hydroroll.team/hotlink-ok/files/image/logo.png
     :width: 60 
     :target: https://docs.hydroroll.team

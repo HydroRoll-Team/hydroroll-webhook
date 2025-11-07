@@ -1,0 +1,32 @@
+# docker-compose.yml by ntskwk@hydroroll.team
+# https://github.com/HydroRoll-Team/iamai-crawler/blob/main/docker-compose.yml
+version: "3"
+services:
+  napcat:
+    image: docker.hydroroll.team/mlikiowa/napcat-docker:latest
+    container_name: napcat
+    environment:
+      - ACCOUNT=
+      - WSR_ENABLE=true
+      # 如果是正向ws，将本项注释掉即可
+      - WS_URLS=["ws://iamai:3001/cqhttp/ws"]
+      - NAPCAT_UID=1000
+      - NAPCAT_GID=1000
+    ports:
+      - 6099:6099
+      - 3001:3001
+    restart: always
+    # 如果是重新创建的容器，需要固定 Mac 地址
+    mac_address: 02:42:ac:11:00:99
+    volumes:
+      - ./qqdata:/app/.config/QQ
+      - ./napcat/config:/app/napcat/config
+      - ./napcat/logs:/app/napcat/logs
+  iamai:
+    image: kuron/iamai-cqhttp:su
+    container_name: iamai
+    expose:
+      - "3001"
+    volumes:
+      - ./plugins:/iamai/plugins
+      

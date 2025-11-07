@@ -1,25 +1,19 @@
-name: Publish Docker image
+name: Docker Publish
 
 on:
   push:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'The version to publish manually'
-        required: true
-        default: 'latest'
+    branches:
+      - main
 
-# This creates an environment variable called `IMAGE_NAME ` with the value `ghtoken_product_demo`.
 env:
   IMAGE_NAME: hydroroll-webhook
-#
+
 jobs:
-  # This pushes the image to GitHub Packages.
-  push:
+  build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      packages: write
       contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -30,22 +24,18 @@ jobs:
       - name: Log in to registry
         run: echo "${{ secrets.ACCESS_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Push image
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+      - name: Push image to GitHub Container Registry
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
-          if [ -n "${{ github.event.inputs.version }}" ]; then
-            VERSION=${{ github.event.inputs.version }} 
-          else
-            VERSION=$(echo "${{ github.ref }}")
-          fi
+          VERSION=${{ github.sha }}
 
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo "$VERSION" | sed -e 's|refs/tags/v||')
-          [ "$VERSION" == "main" ] && VERSION=latest
+          echo "IMAGE_ID: $IMAGE_ID"
+          echo "VERSION (Commit SHA): $VERSION"
 
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
           sudo docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          sudo docker tag $IMAGE_NAME $IMAGE_ID:latest
+
           sudo docker push $IMAGE_ID:$VERSION
+          sudo docker push $IMAGE_ID:latest

@@ -83,7 +83,6 @@ features
 - ``commit_comment`` - 提交评论
 - ``ping`` - Webhook 测试
 
-.. end-index
 
 ----
 
@@ -283,13 +282,12 @@ A: 使用 ``/webhook status`` 查看服务器状态并在 GitHub Webhook 页面�
 许可证
 ======
 
-AGPLv3 © 2025-PRESENT `简律纯`_ & `HydroRoll-Team`_。
+AGPLv3 © 2025-PRESENT `HydroRoll-Team`_
 
 .. |logo| image:: https://files.hydroroll.team/hotlink-ok/files/image/logo.png
     :width: 60 
     :target: https://docs.hydroroll.team
 .. _iamai: https://iamai.is-a.dev/
 .. _go-cqhttp: https://github.com/Mrs4s/go-cqhttp
-.. _简律纯: https://github.com/HsiangNianian
 .. _HydroRoll-Team: https://github.com/HydroRoll-Team
 

@@ -311,20 +311,10 @@ class WebhookServer:
         if not target_groups:
             logger.warning("No target groups configured")
             return
-        
-        cqhttp_adapter = None
-        for adapter in self.bot.adapters:
-            if adapter.name.lower() == "cqhttp":
-                cqhttp_adapter = adapter
-                break
-        
-        if not cqhttp_adapter:
-            logger.error("CQHTTP adapter not found")
-            return
-        
+
         for group_id in target_groups:
             try:
-                await cqhttp_adapter.call_api(
+                await self.bot.get_adapter("cqhttp").call_api(
                     "send_group_msg",
                     group_id=group_id,
                     message=message

@@ -11,9 +11,10 @@
    :target: https://github.com/HydroRoll-Team/support/issues/new/choose
    :alt: 加入社区
 
+|logo|
 
-HydroRoll Webhook |logo| 
-========================
+HydroRoll Webhook
+=================
 
 |python_v| |iamai_v| |license| |docker| |community|
 
@@ -279,6 +280,7 @@ LICENSE
 AGPLv3 © 2025-PRESENT `HydroRoll-Team`_
 
 .. |logo| image:: https://files.hydroroll.team/hotlink-ok/files/image/logo.png
+    :align: center
     :width: 60 
     :target: https://docs.hydroroll.team
 .. _iamai: https://iamai.is-a.dev/

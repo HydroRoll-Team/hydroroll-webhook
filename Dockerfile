@@ -8,7 +8,7 @@ RUN apt-get -qq -o Acquire::Retries=3 update && \
     pip install 'iamai-adapter-cqhttp==0.0.3' && \
     pip install 'feedparser==6.0.11' && \
     pip install pydantic aiohttp requests && \
-    iamai new iamai && cd iamai
+    mkdir -p bot/data && cd bot
 
 COPY main.py /iamai
 COPY config.toml /iamai

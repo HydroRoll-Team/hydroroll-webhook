@@ -280,7 +280,7 @@ LICENSE
 AGPLv3 © 2025-PRESENT `HydroRoll-Team`_
 
 .. |logo| image:: https://files.hydroroll.team/hotlink-ok/files/image/logo.png
-    :align: center
+    :align: bottom
     :width: 60 
     :target: https://docs.hydroroll.team
 .. _iamai: https://iamai.is-a.dev/

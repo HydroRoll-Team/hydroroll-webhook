@@ -268,12 +268,17 @@ FAQ
 ===
 
 Q: 如何修改 Webhook 监听端口？  
+
 A:在 ``config.toml`` 中修改 ``[plugin.webhook]`` 的 ``port`` 配置。
 
+
 Q: 配置文件保存在哪里？  
+
 A:配置保存在 ``data/webhook_config.json``，会自动创建。
 
+
 Q: 如何调试 Webhook？  
+
 A: 使用 ``/webhook status`` 查看服务器状态并在 GitHub Webhook 页面查看推送记录, 最后访问 ``http://服务器IP:997/stats`` 查看统计信息
 
 LICENSE

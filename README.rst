@@ -137,7 +137,7 @@ Docker Deployment
 .. code:: shell
 
   docker build -t hydroroll-webhook .
-  docker run -d -p 3001:3001 -p 997:997 -v $(pwd)/data:/iamai/data hydroroll-webhook
+  docker run -d -p 3001:3001 -p 997:997 -v $(pwd)/data:/bot/data hydroroll-webhook
 
 ----
 

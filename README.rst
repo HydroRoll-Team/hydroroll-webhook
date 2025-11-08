@@ -12,10 +12,10 @@
    :alt: 加入社区
 
 .. raw::html
-
-   |logo|
-
-   <h1 align="center">HydroRoll Webhook</h1>
+   
+   <div align="center">
+      <h1>HydroRoll Webhook</h1>
+   </div>
 
 
 |python_v| |iamai_v| |license| |docker| |community|

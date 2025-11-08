@@ -10,11 +10,11 @@ RUN apt-get -qq -o Acquire::Retries=3 update && \
     pip install pydantic aiohttp requests && \
     mkdir -p bot/data && cd bot
 
-COPY main.py /iamai
-COPY config.toml /iamai
-COPY docker-entrypoint.sh /iamai
+COPY main.py /bot
+COPY config.toml /bot
+COPY docker-entrypoint.sh /bot
 
-WORKDIR /iamai
+WORKDIR /bot
 EXPOSE 3001
 STOPSIGNAL SIGINT
 ENTRYPOINT ["bash", "docker-entrypoint.sh"]
